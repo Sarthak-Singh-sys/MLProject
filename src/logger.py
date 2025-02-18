@@ -18,7 +18,7 @@ logging.basicConfig(
 logger=logging.getLogger(__name__)
 
 # Example log message
-logger.info("Logger is successfully configured.")
+# logger.info("Logger is successfully configured.")
 
 
 

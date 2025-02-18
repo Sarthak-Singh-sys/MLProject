@@ -21,11 +21,11 @@ class CustomException(Exception):
         return self.error_message
     
 # Example usage:
-if __name__ == "__main__":
-    try:
-        a = 1 / 0  # This will raise a ZeroDivisionError
-    except Exception as e:
-        logging.error(CustomException(e, sys))  # Logs the detailed custom exception
+# if __name__ == "__main__":
+#     try:
+#         a = 1 / 0  # This will raise a ZeroDivisionError
+#     except Exception as e:
+#         logging.error(CustomException(e, sys))  # Logs the detailed custom exception
 
     
 
