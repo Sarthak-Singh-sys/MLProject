@@ -9,38 +9,42 @@ from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from src.exception import CustomException
 from src.logger import logger
 import os
+from src.utlils import save_object
 
 @dataclass
 class DataTransformationConfig:
-    preprocessor_ob_file_path= os.path.join(os.getcwd(),"artifacts","preprocessor.pkl")
+    preprocessor_obj_file_path= os.path.join(os.getcwd(),"artifact","preprocessor.pkl")
 
 class DataTransformation:
     def __init__(self):
         self.data_transformation_config=DataTransformationConfig()
     
     def get_data_transformer_object(self):
+        """
+        This function is used for Data transformation
+        """
         
         try:
-            numerical_features=["writing_score","reading_score"]
+            numerical_features=["writing score","reading score"]
             categorical_features=[
                 "gender",
-                "race_ethnicity",
-                "parental_level_of_education",
+                "race/ethnicity",
+                "parental level of education",
                 "lunch",
-                "test_preparation_course"
+                "test preparation course"
             ]
 
             num_pipeline=Pipeline(
                 steps=[
                     ("imputer",SimpleImputer(strategy="median")),
-                    ("std_scaler",StandardScaler())
+                    ("std_scaler",StandardScaler(with_mean=False))
                 ]
             )
             cat_pipeline=Pipeline(
                 steps=[
                     ("imputer",SimpleImputer(strategy="most_frequent")),
-                    ("onehot",OneHotEncoder())
-                    ("std_scaler",StandardScaler())
+                    ("onehot",OneHotEncoder()),
+                    ("std_scaler",StandardScaler(with_mean=False))
 
                 ]
             )
@@ -66,17 +70,32 @@ class DataTransformation:
             logger.info("Read the train and test data as dataframe")
             logger.info("Obtaining preprocessing object")
 
-            preprocessor=self.get_data_transformer_object()
-            target_column_name="math_score"
-            numerical_features=["writing_score","reading_score"]
+            preprocessor_obj=self.get_data_transformer_object()
+            target_column_name="math score"
+            numerical_features=["writing score","reading score"]
 
             input_feature_train_df=train_df.drop(target_column_name,axis=1)
             target_feature_train_df=train_df[target_column_name]
 
             input_feature_test_df=test_df.drop(target_column_name,axis=1)
             target_feature_test_df=test_df[target_column_name]
-        except:
-            pass
+
+            logger.info("Applying the preprocessing object on the train and test data")
+
+            input_feature_train_array=preprocessor_obj.fit_transform(input_feature_train_df)
+            input_feature_test_array=preprocessor_obj.transform(input_feature_test_df)
+            logger.info("Tranformation of the data is completed")
+
+            train_arr=np.c_[input_feature_train_array,np.array(target_feature_train_df)]
+            test_arr=np.c_[input_feature_test_array,np.array(target_feature_test_df)]
+
+            logger.info("Saving the preprocessor object")
+
+            save_object(self.data_transformation_config.preprocessor_obj_file_path,preprocessor_obj)
+
+            return train_arr,test_arr,self.data_transformation_config.preprocessor_obj_file_path
+        except Exception as e:
+            raise CustomException(e,sys)
 
 
 
