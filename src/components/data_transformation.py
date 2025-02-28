@@ -25,13 +25,13 @@ class DataTransformation:
         """
         
         try:
-            numerical_features=["writing score","reading score"]
+            numerical_features=["writing_score","reading_score"]
             categorical_features=[
                 "gender",
-                "race/ethnicity",
-                "parental level of education",
+                "race_ethnicity",
+                "parental_level_of_education",
                 "lunch",
-                "test preparation course"
+                "test_preparation_course"
             ]
 
             num_pipeline=Pipeline(
@@ -43,7 +43,7 @@ class DataTransformation:
             cat_pipeline=Pipeline(
                 steps=[
                     ("imputer",SimpleImputer(strategy="most_frequent")),
-                    ("onehot",OneHotEncoder()),
+                    ("onehot",OneHotEncoder(handle_unknown="ignore")),
                     ("std_scaler",StandardScaler(with_mean=False))
 
                 ]
@@ -71,7 +71,7 @@ class DataTransformation:
             logger.info("Obtaining preprocessing object")
 
             preprocessor_obj=self.get_data_transformer_object()
-            target_column_name="math score"
+            target_column_name="math_score"
             numerical_features=["writing score","reading score"]
 
             input_feature_train_df=train_df.drop(target_column_name,axis=1)
