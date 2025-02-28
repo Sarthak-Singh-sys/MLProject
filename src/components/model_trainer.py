@@ -1,7 +1,7 @@
 import os
 import sys
 from dataclasses import dataclass
-from catboost import CatBoostClassifier
+from catboost import CatBoostRegressor
 from sklearn.ensemble import RandomForestRegressor,AdaBoostRegressor,GradientBoostingRegressor
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score
@@ -41,7 +41,7 @@ class ModelTrainer:
                 "AdaBoost":AdaBoostRegressor(),
                 "Gradient Boosting":GradientBoostingRegressor(),
                 "XGBoost":XGBRegressor(),
-                "CatBoost":CatBoostClassifier()
+                "CatBoost":CatBoostRegressor()
 
             }
             model_report:dict=evaluate_model(X_train=X_train,Y_train=Y_train,X_test=X_test,Y_test=Y_test,models=models)
